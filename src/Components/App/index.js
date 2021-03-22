@@ -3,6 +3,7 @@ import * as s from "./app.module.scss";
 import Label from "../Label";
 import Input from "../Input";
 import Button from "../Button";
+import * as ls from "local-storage";
 class App extends Component {
   constructor(props) {
     super(props);
@@ -28,12 +29,14 @@ class App extends Component {
         labelStates[id].showModal = false;
         console.log(labelStates);
         this.setState({ labels: labelStates });
+        ls.set("labels", this.state.labels);
         break;
       }
       case "input": {
         let inputStates = this.state.inputs;
         inputStates[id].showModal = false;
         this.setState({ inputs: inputStates });
+        ls.set("inputs", this.state.inputs);
 
         break;
       }
@@ -41,7 +44,12 @@ class App extends Component {
         let buttonStates = this.state.buttons;
         buttonStates[id].showModal = false;
         this.setState({ buttons: buttonStates });
+        ls.set("buttons", this.state.buttons);
+
         break;
+      }
+      default: {
+        console.log("Default");
       }
     }
   }
@@ -55,12 +63,15 @@ class App extends Component {
         let labelStates = this.state.labels;
         labelStates[id].showModal = true;
         this.setState({ labels: labelStates });
+        ls.set("labels", this.state.labels);
+
         break;
       }
       case "input": {
         let inputStates = this.state.inputs;
         inputStates[id].showModal = true;
         this.setState({ inputs: inputStates });
+        ls.set("inputs", this.state.inputs);
 
         break;
       }
@@ -69,11 +80,17 @@ class App extends Component {
         console.log(buttonStates[id]);
         buttonStates[id].showModal = true;
         this.setState({ buttons: buttonStates });
+        ls.set("buttons", this.state.buttons);
+
         break;
+      }
+      default: {
+        console.log("Default");
       }
     }
   }
   closeAllModals() {
+    console.log("HI");
     let labelsArray = this.state.labels;
     let inputsArray = this.state.inputs;
     let buttonsArray = this.state.buttons;
@@ -84,6 +101,15 @@ class App extends Component {
       inputsArray.forEach((input) => (input.showModal = false));
     buttonsArray.length > 0 &&
       buttonsArray.forEach((button) => (button.showModal = false));
+
+    this.setState({
+      labels: labelsArray,
+      inputs: inputsArray,
+      buttons: buttonsArray,
+    });
+    ls.set("labels", this.state.labels);
+    ls.set("inputs", this.state.inputs);
+    ls.set("buttons", this.state.buttons);
   }
 
   dragOver(ev) {
@@ -98,7 +124,8 @@ class App extends Component {
       case "label": {
         let stateArray = this.state.labels;
 
-        stateArray.length > 0 &&
+        stateArray &&
+          stateArray.length > 0 &&
           stateArray.forEach((label) => (label.showModal = false));
         this.setState({ labels: stateArray });
         let styleObj = {
@@ -111,12 +138,15 @@ class App extends Component {
         let tempArr1 = this.state.labels;
         tempArr1.push(styleObj);
         this.setState({ labels: tempArr1 });
+        ls.set("labels", this.state.labels);
+
         break;
       }
       case "input": {
         let stateArray = this.state.inputs;
 
-        stateArray.length > 0 &&
+        stateArray &&
+          stateArray.length > 0 &&
           stateArray.forEach((input) => (input.showModal = false));
         this.setState({ inputs: stateArray });
         let styleObj = {
@@ -128,12 +158,15 @@ class App extends Component {
         let tempArr2 = this.state.inputs;
         tempArr2.push(styleObj);
         this.setState({ inputs: tempArr2 });
+        ls.set("inputs", this.state.inputs);
+
         break;
       }
       case "button": {
         let stateArray = this.state.buttons;
 
-        stateArray.length > 0 &&
+        stateArray &&
+          stateArray.length > 0 &&
           stateArray.forEach((button) => (button.showModal = false));
         this.setState({ buttons: stateArray });
 
@@ -146,7 +179,12 @@ class App extends Component {
         let tempArr3 = this.state.buttons;
         tempArr3.push(styleObj);
         this.setState({ buttons: tempArr3 });
+        ls.set("buttons", this.state.buttons);
+
         break;
+      }
+      default: {
+        console.log("Default");
       }
     }
   }
@@ -159,11 +197,22 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    const labels = ls.get("labels") || [];
+    const buttons = ls.get("buttons") || [];
+    const inputs = ls.get("inputs") || [];
+
+    console.log("LABELS", labels);
+    console.log("BUTTONS", buttons);
+    console.log("INPUTS", inputs);
+    this.setState({ labels: labels, buttons: buttons, inputs: inputs });
+  }
+
   render() {
     const { labels, inputs, buttons } = this.state;
     console.log(this.state);
     const renderLabels = (data) => {
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         return data.map((label, i) => {
           return (
             <div key={i}>
@@ -180,7 +229,7 @@ class App extends Component {
       }
     };
     const renderInputs = (data) => {
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         return data.map((label, i) => {
           return (
             <div key={i}>
@@ -197,7 +246,7 @@ class App extends Component {
       }
     };
     const renderButtons = (data) => {
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         return data.map((label, i) => {
           return (
             <div key={i}>

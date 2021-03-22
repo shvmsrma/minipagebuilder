@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import * as s from "./button.module.scss";
+import * as ls from "local-storage";
+import * as cx from "classnames";
 class Button extends Component {
   constructor(props) {
     super(props);
@@ -8,8 +10,9 @@ class Button extends Component {
       y: 0,
       tempX: 0,
       tempY: 0,
-      buttonLabel: "",
+      buttonLabel: "Button",
       tempbuttonLabel: "Button",
+      buttonBorder: false,
     };
     this.changeValue = this.changeValue.bind(this);
   }
@@ -34,6 +37,10 @@ class Button extends Component {
     }
   }
 
+  toggleBorder() {
+    this.setState({ buttonBorder: !this.state.buttonBorder });
+  }
+
   endDrag(e) {
     this.setState({
       tempX: e.clientX,
@@ -43,11 +50,23 @@ class Button extends Component {
     });
   }
   onClickSave() {
-    const { closeAllModals } = this.props;
+    const {
+      closeAllModals,
+      data: { id, showModal },
+    } = this.props;
+    const { x, y } = this.state;
 
     const { tempX, tempY, tempbuttonLabel } = this.state;
     this.setState({ x: tempX, y: tempY, buttonLabel: tempbuttonLabel });
     closeAllModals();
+    let buttonArray = ls.get("buttons");
+    buttonArray[id] = {
+      x: x,
+      y: y,
+      id: id,
+      showModal: showModal,
+    };
+    ls.set("buttons", buttonArray);
   }
   render() {
     const { x, y, buttonLabel } = this.state;
@@ -57,14 +76,18 @@ class Button extends Component {
       closeModal,
       openModal,
     } = this.props;
+    const ButtonClass = cx(s.button, {
+      [s.buttonBorder]: this.state.buttonBorder === true,
+    });
     return (
       <>
         <div
-          className={s.button}
+          className={ButtonClass}
           style={{ position: "absolute", left: x, top: y }}
-          draggable
           onDragEnd={(e) => this.endDrag(e)}
-          onClick={() => openModal("button", id)}
+          onClick={() => this.toggleBorder()}
+          draggable={this.state.buttonBorder ? true : false}
+          onDoubleClick={() => openModal("button", id)}
         >
           {buttonLabel}
         </div>

@@ -3,6 +3,13 @@
   height: 50px;
   background-color: #ffffff;
 }
+input:focus {
+  outline: none;
+}
+
+.inputBorder {
+  border: 1px solid red;
+}
 .modal {
   z-index: 20;
 
