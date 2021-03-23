@@ -14,6 +14,7 @@ class Input extends Component {
       inputBorder: false,
     };
     this.changeValue = this.changeValue.bind(this);
+    this.onPressKey = this.onPressKey.bind(this);
   }
   changeValue(e, type) {
     if (type === "X") {
@@ -24,12 +25,32 @@ class Input extends Component {
       this.setState({ tempbuttonLabel: e.currentTarget.value });
     }
   }
+
+  onPressKey = (e) => {
+    const { inputBorder } = this.state;
+    const {
+      deleteItem,
+      data: { id },
+      openModal,
+    } = this.props;
+    if (e.keyCode === 8) {
+      if (inputBorder === true) {
+        deleteItem("input", id);
+      }
+    } else if (e.keyCode === 13) {
+      if (inputBorder === true) {
+        openModal("input", id);
+      }
+    }
+  };
+
   toggleBorder() {
     this.setState({ inputBorder: !this.state.inputBorder });
   }
   componentDidMount() {
     const { data } = this.props;
     this.setState({ x: data.x, y: data.y, tempX: data.x, tempY: data.y });
+    document.addEventListener("keydown", this.onPressKey, false);
   }
   onClickSave() {
     const {
@@ -49,6 +70,9 @@ class Input extends Component {
       showModal: showModal,
     };
     ls.set("inputs", inputArray);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.onPressKey, false);
   }
   endDrag(e) {
     this.setState({

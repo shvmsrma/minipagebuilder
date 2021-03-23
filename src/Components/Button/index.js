@@ -15,6 +15,7 @@ class Button extends Component {
       buttonBorder: false,
     };
     this.changeValue = this.changeValue.bind(this);
+    this.onPressKey = this.onPressKey.bind(this);
   }
   componentDidMount() {
     const { data } = this.props;
@@ -26,6 +27,7 @@ class Button extends Component {
       buttonLabel: "Button",
       tempbuttonLabel: "Button",
     });
+    document.addEventListener("keydown", this.onPressKey, false);
   }
   changeValue(e, type) {
     if (type === "X") {
@@ -36,9 +38,31 @@ class Button extends Component {
       this.setState({ tempbuttonLabel: e.currentTarget.value });
     }
   }
+  onPressKey = (e) => {
+    const { buttonBorder } = this.state;
+
+    const {
+      deleteItem,
+      data: { id },
+      openModal,
+    } = this.props;
+    if (e.keyCode === 8) {
+      if (buttonBorder === true) {
+        deleteItem("button", id);
+      }
+    } else if (e.keyCode === 13) {
+      if (buttonBorder === true) {
+        openModal("button", id);
+      }
+    }
+  };
 
   toggleBorder() {
     this.setState({ buttonBorder: !this.state.buttonBorder });
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.onPressKey, false);
   }
 
   endDrag(e) {

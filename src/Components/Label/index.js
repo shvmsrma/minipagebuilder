@@ -16,6 +16,7 @@ class Label extends Component {
       labelBorder: false,
     };
     this.changeValue = this.changeValue.bind(this);
+    this.onPressKey = this.onPressKey.bind(this);
   }
   componentDidMount() {
     const { data } = this.props;
@@ -27,6 +28,7 @@ class Label extends Component {
       label: "This is the text",
       tempLabel: "This is the text",
     });
+    document.addEventListener("keydown", this.onPressKey, false);
   }
   changeValue(e, type) {
     if (type === "X") {
@@ -40,6 +42,24 @@ class Label extends Component {
   toggleBorder() {
     this.setState({ labelBorder: !this.state.labelBorder });
   }
+  onPressKey = (e) => {
+    const { labelBorder } = this.state;
+    const {
+      deleteItem,
+      data: { id },
+      openModal,
+    } = this.props;
+    if (e.keyCode === 8) {
+      if (labelBorder === true) {
+        deleteItem("label", id);
+      }
+    } else if (e.keyCode === 13) {
+      if (labelBorder === true) {
+        openModal("label", id);
+      }
+    }
+  };
+
   onClickSave() {
     const {
       closeAllModals,
@@ -58,6 +78,9 @@ class Label extends Component {
       showModal: showModal,
     };
     ls.set("labels", labelArray);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.onPressKey, false);
   }
   endDrag(e) {
     this.setState({

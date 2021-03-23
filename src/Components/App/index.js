@@ -25,16 +25,18 @@ class App extends Component {
     switch (type) {
       case "label": {
         let labelStates = this.state.labels;
-        console.log(labelStates[id]);
-        labelStates[id].showModal = false;
-        console.log(labelStates);
+        let index = labelStates.findIndex((p) => p.id === id);
+
+        labelStates[index].showModal = false;
         this.setState({ labels: labelStates });
         ls.set("labels", this.state.labels);
         break;
       }
       case "input": {
         let inputStates = this.state.inputs;
-        inputStates[id].showModal = false;
+        let index = inputStates.findIndex((p) => p.id === id);
+
+        inputStates[index].showModal = false;
         this.setState({ inputs: inputStates });
         ls.set("inputs", this.state.inputs);
 
@@ -42,7 +44,9 @@ class App extends Component {
       }
       case "button": {
         let buttonStates = this.state.buttons;
-        buttonStates[id].showModal = false;
+        let index = buttonStates.findIndex((p) => p.id === id);
+
+        buttonStates[index].showModal = false;
         this.setState({ buttons: buttonStates });
         ls.set("buttons", this.state.buttons);
 
@@ -61,7 +65,9 @@ class App extends Component {
     switch (type) {
       case "label": {
         let labelStates = this.state.labels;
-        labelStates[id].showModal = true;
+        const index = labelStates.findIndex((p) => p.id === id);
+        console.log(index);
+        labelStates[index].showModal = true;
         this.setState({ labels: labelStates });
         ls.set("labels", this.state.labels);
 
@@ -69,7 +75,9 @@ class App extends Component {
       }
       case "input": {
         let inputStates = this.state.inputs;
-        inputStates[id].showModal = true;
+        const index = inputStates.findIndex((p) => p.id === id);
+
+        inputStates[index].showModal = true;
         this.setState({ inputs: inputStates });
         ls.set("inputs", this.state.inputs);
 
@@ -77,8 +85,9 @@ class App extends Component {
       }
       case "button": {
         let buttonStates = this.state.buttons;
-        console.log(buttonStates[id]);
-        buttonStates[id].showModal = true;
+        const index = buttonStates.findIndex((p) => p.id === id);
+
+        buttonStates[index].showModal = true;
         this.setState({ buttons: buttonStates });
         ls.set("buttons", this.state.buttons);
 
@@ -116,6 +125,42 @@ class App extends Component {
     ev.preventDefault();
   }
 
+  deleteItem(type, id) {
+    switch (type) {
+      case "label": {
+        let stateArray = this.state.labels;
+        const index = stateArray.findIndex((p) => p.id === id);
+        stateArray.splice(index, 1);
+        this.setState({ labels: stateArray });
+
+        ls.set("labels", this.state.labels);
+
+        break;
+      }
+      case "input": {
+        let stateArray = this.state.inputs;
+        const index = stateArray.findIndex((p) => p.id === id);
+        stateArray.splice(index, 1);
+        this.setState({ inputs: stateArray });
+        ls.set("inputs", this.state.inputs);
+
+        break;
+      }
+      case "button": {
+        let stateArray = this.state.buttons;
+        const index = stateArray.findIndex((p) => p.id === id);
+        stateArray.splice(index, 1);
+        this.setState({ buttons: stateArray });
+        ls.set("buttons", this.state.buttons);
+
+        break;
+      }
+      default: {
+        console.log("Default");
+      }
+    }
+  }
+
   endDrag(e, type) {
     console.log(e);
     console.log(type);
@@ -131,7 +176,10 @@ class App extends Component {
         let styleObj = {
           x: e.clientX,
           y: e.clientY,
-          id: this.state.labels.length,
+          id:
+            stateArray.length > 0
+              ? this.state.labels[this.state.labels.length - 1].id + 1
+              : 0,
           showModal: true,
         };
 
@@ -152,7 +200,10 @@ class App extends Component {
         let styleObj = {
           x: e.clientX,
           y: e.clientY,
-          id: this.state.inputs.length,
+          id:
+            stateArray.length > 0
+              ? this.state.inputs[this.state.inputs.length - 1].id + 1
+              : 0,
           showModal: true,
         };
         let tempArr2 = this.state.inputs;
@@ -173,7 +224,10 @@ class App extends Component {
         let styleObj = {
           x: e.clientX,
           y: e.clientY,
-          id: this.state.buttons.length,
+          id:
+            stateArray.length > 0
+              ? this.state.buttons[this.state.buttons.length - 1].id + 1
+              : 0,
           showModal: true,
         };
         let tempArr3 = this.state.buttons;
@@ -221,6 +275,7 @@ class App extends Component {
                 closeModal={(type, id) => this.closeModal(type, id)}
                 openModal={(type, id) => this.openModal(type, id)}
                 closeAllModals={() => this.closeAllModals}
+                deleteItem={(type, id) => this.deleteItem(type, id)}
               />
               ;
             </div>
@@ -238,6 +293,7 @@ class App extends Component {
                 closeModal={(type, id) => this.closeModal(type, id)}
                 openModal={(type, id) => this.openModal(type, id)}
                 closeAllModals={() => this.closeAllModals}
+                deleteItem={(type, id) => this.deleteItem(type, id)}
               />
               ;
             </div>
@@ -255,6 +311,7 @@ class App extends Component {
                 closeModal={(type, id) => this.closeModal(type, id)}
                 openModal={(type, id) => this.openModal(type, id)}
                 closeAllModals={() => this.closeAllModals}
+                deleteItem={(type, id) => this.deleteItem(type, id)}
               />
               ;
             </div>
